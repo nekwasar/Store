@@ -1,0 +1,63 @@
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27018:27017"
+    restart: always
+    env_file:
+      - .env.mongo
+    volumes:
+      - mongodb_dev:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  fastapi_shop:
+    build:
+      context: .
+    ports:
+      - "8989:8989"
+    restart: always
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - .env.project
+    volumes:
+      - static_volume_dev:/code/static
+    healthcheck:
+      test: curl -f http://localhost:8989/health || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6380:6379"
+    restart: always
+    healthcheck:
+      test: redis-cli ping | grep PONG
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - "15673:15672"
+      - "5673:5672"
+    restart: always
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  static_volume_dev:
+  mongodb_dev:

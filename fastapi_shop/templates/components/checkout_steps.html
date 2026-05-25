@@ -1,0 +1,23 @@
+{% set steps = [
+    {'num': 1, 'label': 'Cart', 'icon': 'bi-cart'},
+    {'num': 2, 'label': 'Details', 'icon': 'bi-file-text'},
+    {'num': 3, 'label': 'Payment', 'icon': 'bi-credit-card'},
+    {'num': 4, 'label': 'Confirmation', 'icon': 'bi-check-circle'},
+] %}
+
+<div class="checkout-steps d-flex justify-content-center mb-4" role="navigation" aria-label="Checkout progress">
+    {% for step in steps %}
+    <div class="checkout-step d-flex flex-column align-items-center {% if loop.index < checkout_step %}completed{% elif loop.index == checkout_step %}active{% else %}future{% endif %}"
+         aria-label="Step {{ step.num }}: {{ step.label }}"
+         {% if loop.index == checkout_step %}aria-current="step"{% endif %}>
+        <div class="step-circle d-flex align-items-center justify-content-center">
+            {% if loop.index < checkout_step %}
+                <i class="bi bi-check-lg"></i>
+            {% else %}
+                <span class="step-number">{{ step.num }}</span>
+            {% endif %}
+        </div>
+        <span class="step-label small mt-1">{{ step.label }}</span>
+    </div>
+    {% endfor %}
+</div>

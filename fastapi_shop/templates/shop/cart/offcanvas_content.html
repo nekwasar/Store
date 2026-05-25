@@ -1,0 +1,59 @@
+{% if items %}
+<ul class="list-group list-group-flush flex-grow-1 overflow-auto">
+    {% for item in items %}
+    {% with product=item.product %}
+    <li class="list-group-item d-flex align-items-center gap-3 px-3 py-3 border-bottom">
+        <a href="{{ url_for('product_detail', _id=product._id, slug=product.slug) }}" class="flex-shrink-0">
+            <div style="width: 50px; height: 50px; border-radius: 0.375rem; overflow: hidden;">
+                <img src="{% if product.thumb %}{{ url_for('static', path=product.thumb) }}{% elif product.image %}{{ url_for('static', path=product.image) }}{% else %}{{ url_for('static', path='img/void.png') }}{% endif %}"
+                     alt="{{ product.name }}"
+                     class="img-fluid h-100" style="object-fit: cover; width: 100%;"
+                     loading="lazy" decoding="async">
+            </div>
+        </a>
+        <div class="flex-grow-1 min-w-0">
+            <a href="{{ url_for('product_detail', _id=product._id, slug=product.slug) }}" class="text-decoration-none text-dark">
+                <div class="small fw-semibold text-truncate">{{ product.name }}</div>
+            </a>
+            <div class="d-flex align-items-center gap-2 mt-1">
+                <button class="btn btn-outline-secondary btn-sm px-2" style="min-width: 32px; min-height: 32px;"
+                        x-on:click="updateQuantity('{{ product._id }}', -1)">−</button>
+                <span class="small fw-medium" style="min-width: 20px; text-align: center;">{{ item.quantity }}</span>
+                <button class="btn btn-outline-secondary btn-sm px-2" style="min-width: 32px; min-height: 32px;"
+                        x-on:click="updateQuantity('{{ product._id }}', 1)">+</button>
+                <span class="small text-muted ms-auto">${{ '%0.2f'|format(item.total_price|float) }}</span>
+            </div>
+        </div>
+        <button class="btn btn-link text-danger p-0 flex-shrink-0" style="min-width: 32px; min-height: 32px;"
+                x-on:click="removeItem('{{ product._id }}')" aria-label="Remove {{ product.name }}">
+            <i class="bi bi-trash"></i>
+        </button>
+    </li>
+    {% endwith %}
+    {% endfor %}
+</ul>
+<div class="border-top px-3 py-3">
+    <div class="d-flex justify-content-between mb-2">
+        <span class="small text-muted">Subtotal</span>
+        <span class="small fw-semibold">${{ '%0.2f'|format(cart.get_total_price_after_discount()|float) }}</span>
+    </div>
+    {% if cart.coupon %}
+    <div class="d-flex justify-content-between mb-2">
+        <span class="small text-success">Coupon "{{ cart.coupon.code }}"</span>
+        <span class="small text-success">−${{ '%0.2f'|format(cart.get_discount()|float) }}</span>
+    </div>
+    {% endif %}
+    <div class="d-flex justify-content-between mb-3">
+        <span class="fw-semibold">Total</span>
+        <span class="fw-bold price-display">${{ '%0.2f'|format(cart.get_total_price_after_discount()|float) }}</span>
+    </div>
+    <a href="{{ url_for('cart_detail') }}" class="btn btn-outline-primary w-100 mb-2">View Full Cart</a>
+    <a href="{{ url_for('order_create') }}" class="btn btn-primary w-100">Checkout</a>
+</div>
+{% else %}
+<div class="d-flex flex-column align-items-center justify-content-center flex-grow-1 p-4 text-center">
+    <i class="bi bi-cart display-4 text-muted mb-3"></i>
+    <p class="text-muted">Your cart is empty.</p>
+    <a href="{{ url_for('product_list_endpoint') }}" class="btn btn-primary btn-sm">Start Shopping</a>
+</div>
+{% endif %}

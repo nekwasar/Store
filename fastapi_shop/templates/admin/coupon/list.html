@@ -1,0 +1,59 @@
+{% extends "admin/home.html" %}
+
+{% block title %}
+    Admin coupons list
+{% endblock %}
+
+{% block content1 %}
+    <form action="{{ url_for('admin_objects_delete_endpoint', model='coupon') }}" method="post"
+          x-data="checkboxList()">
+        <div class="table-responsive">
+        <table class="table table-hover text-center">
+            <tr>
+                <th scope="col"><label class="d-flex align-items-center gap-1" style="cursor:pointer; min-height:44px;"><input class="form-check-input" type="checkbox" id="masterCheckbox"
+                                       @change="toggleAll" aria-label="delete"> Delete</label>
+                </th>
+
+                <th scope="col"></th>
+                <th scope="col" class="text-start">ID</th>
+
+                <th scope="col">Code</th>
+                <th scope="col">Valid from</th>
+                <th scope="col">Valid to</th>
+                <th scope="col">Discount</th>
+                <th scope="col">Active</th>
+            </tr>
+            {% for coupon in coupons %}
+                <tr class="table-row align-middle" data-href="{{ url_for('admin_coupon_edit_endpoint', _id=coupon._id) }}">
+                    <td><label style="display:flex; align-items:center; justify-content:center; min-height:44px; cursor:pointer;"><input class="form-check-input mt-0 childCheckbox" type="checkbox" name="delete"
+                               @change="onChildChange" aria-label="to-delete-checkbox" value="{{ coupon._id }}"></label></td>
+                <td class="text-end" x-data="clipboardCopy('{{ coupon._id }}')">
+                        <a href="#" @click.prevent="copy" data-bs-toggle="tooltip" data-bs-title="Click to copy ID"
+                           class="text-decoration-none text-dark">⧉</a>
+                    </td>
+                    <td class="table-link-child text-start small">{{ coupon._id }}</td>
+
+                    <td class="table-link-child">{{ coupon.code }}</td>
+                    <td class="table-link-child small">{{ coupon.valid_from }}</td>
+                    <td class="table-link-child small">{{ coupon.valid_to }}</td>
+                    <td class="table-link-child">{{ coupon.discount }}</td>
+                    <td class="table-link-child
+                                    {% if coupon.active %} table-success
+                                    {% else %} table-danger {% endif %}"></td>
+                </tr>
+
+            {% endfor %}
+            <tr class="table-row">
+                <td class="table-link table-info" data-href="{{ url_for('admin_coupon_create_endpoint') }}" colspan="9">Add new coupon</td>
+            </tr>
+            <tr class="table-row" style="transform: rotate(0);">
+                <td colspan="9" class="table-danger p-0">
+                    <button type="submit" class="btn stretched-link submit-button"
+                            x-bind:disabled="!anyChecked">Delete selected
+                    </button>
+                </td>
+            </tr>
+        </table>
+        </div>
+    </form>
+{% endblock %}

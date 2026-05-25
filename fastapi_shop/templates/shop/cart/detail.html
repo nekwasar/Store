@@ -1,0 +1,153 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Cart
+{% endblock %}
+
+{% block content %}
+
+    <div class="container content-section">
+        <h1 class="h3 fw-bold mb-4">Shopping Cart</h1>
+
+        {% include "components/checkout_steps.html" %}
+
+        {% if items %}
+        <div class="row g-3">
+            {% for item in items %}
+                {% with product=item.product %}
+                <div class="col-12">
+                    <div class="card cart-item-card shadow-sm border-0">
+                        <div class="row g-0 align-items-center">
+                            <div class="col-3 col-md-2">
+                                <a href="{{ url_for('product_detail', _id=product._id, slug=product.slug) }}">
+                                    <div style="aspect-ratio: 1; overflow: hidden; border-radius: 0.5rem 0 0 0.5rem;">
+                                        <img src="{% if product.image %}
+                                                    {{ url_for('static', path=product.image) }}
+                                               {% else %}
+                                                    {{ url_for('static', path='img/void.png') }}
+                                               {% endif %}"
+                                             alt="{{ product.name }}"
+                                             class="img-fluid h-100" style="object-fit: cover; width: 100%;"
+                                             loading="lazy" decoding="async">
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-9 col-md-10">
+                                <div class="card-body p-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-12 col-md-4 mb-2 mb-md-0">
+                                            <h5 class="card-title mb-1 fs-6">
+                                                <a href="{{ url_for('product_detail', _id=product._id, slug=product.slug) }}"
+                                                   class="text-decoration-none text-dark">{{ product.name }}</a>
+                                            </h5>
+                                            <span class="text-muted small">${{ item.price }} each</span>
+                                        </div>
+                                        <div class="col-6 col-md-3 mb-2 mb-md-0">
+                                            <form action="{{ url_for('add_to_cart') }}" method="post"
+                                                  enctype="application/x-www-form-urlencoded">
+                                                <input type="hidden" name="override_quantity" value="true"/>
+                                                <input type="hidden" name="product_id" value="{{ product._id }}"/>
+                                                <div class="input-group input-group-sm" style="max-width: 120px;">
+                                                    <input type="number" min="1" step="1" class="form-control"
+                                                           name="quantity" value="{{ item.quantity }}"
+                                                           aria-label="Quantity">
+                                                    <button type="submit" class="btn btn-outline-primary">Change</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="col-3 col-md-2 text-center mb-2 mb-md-0">
+                                            <span class="fw-semibold">${{ item.total_price }}</span>
+                                        </div>
+                                        <div class="col-3 col-md-1 text-end">
+                                            <form action="{{ url_for('remove_from_cart') }}" method="post">
+                                                <input type="hidden" name="product_id" value="{{ product._id }}"/>
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+
+        <!-- Totals -->
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body p-4">
+                {% if cart.coupon %}
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal</span>
+                    <span>${{ '%0.2f'|format(cart.get_total_price()|float) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 text-success">
+                    <span>Coupon "{{ cart.coupon.code }}" ({{ cart.coupon.discount }}% off)</span>
+                    <span>– ${{ '%0.2f'|format(cart.get_discount()|float) }}</span>
+                </div>
+                <hr>
+                {% endif %}
+                <div class="d-flex justify-content-between fw-bold fs-5">
+                    <span>Total</span>
+                    <span class="price-display">${{ '%0.2f'|format(cart.get_total_price_after_discount()|float) }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coupon + Actions -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mt-4 gap-2">
+            <form class="input-group" style="max-width: 350px;" action="{{ url_for('coupon_apply') }}" method="post">
+                <input required type="text" class="form-control" placeholder="Enter coupon code" name="coupon_code">
+                <button class="btn btn-outline-success" type="submit">Apply</button>
+            </form>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('product_list_endpoint') }}" class="btn btn-outline-info">Continue Shopping</a>
+                <a href="{{ url_for('order_create') }}" class="btn btn-primary">Checkout</a>
+            </div>
+        </div>
+
+        {% if recommendations %}
+            <div class="mt-5">
+                <hr class="mb-4">
+                <h3 class="h5 fw-semibold mb-3">You might also like</h3>
+                <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-3">
+                    {% for p in recommendations %}
+                    <div class="col stagger-card" style="animation-delay: {{ loop.index0 * 0.05 }}s">
+                        <div class="card product-card shadow-sm h-100 border-0">
+                            <a href="{{ url_for('product_detail', _id=p._id, slug=p.slug) }}" class="text-decoration-none">
+                                <div style="aspect-ratio: 1; overflow: hidden; border-radius: 0.5rem 0.5rem 0 0;">
+                                    <img class="card-img-top img-fluid h-100" style="object-fit: cover;"
+                                         src="{% if p.image %}
+                                                {{ url_for('static', path=p.image) }}
+                                           {% else %}
+                                                {{ url_for('static', path='img/void.png') }}
+                                           {% endif %}"
+                                          alt="{{ p.name }}" loading="lazy" decoding="async">
+                                </div>
+                            </a>
+                            <div class="card-body p-2">
+                                <p class="card-text small mb-0 text-truncate">
+                                    <a class="text-decoration-none text-dark"
+                                       href="{{ url_for('product_detail', _id=p._id, slug=p.slug) }}">{{ p.name }}</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-cart display-1 text-muted"></i>
+            <p class="text-muted mt-3">Your cart is empty.</p>
+            <a href="{{ url_for('product_list_endpoint') }}" class="btn btn-primary">Start Shopping</a>
+        </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

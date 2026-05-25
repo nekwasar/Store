@@ -1,0 +1,81 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Administration
+{% endblock %}
+
+{% block content %}
+
+    <div class="d-flex flex-nowrap admin-layout">
+        <div class="d-flex flex-column flex-shrink-0 p-3 admin-sidebar border-end bg-light">
+            <h6 class="text-muted text-uppercase small fw-semibold mb-3 px-2">Models</h6>
+
+            <ul class="nav flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="{{ url_for('admin_product_list_endpoint') }}"
+                       class="nav-link {% if request.url.path.startswith('/admin/product') %}active{% endif %}">
+                        Products</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('admin_category_list_endpoint') }}"
+                       class="nav-link {% if request.url.path.startswith('/admin/category') %}active{% endif %}">
+                        Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('admin_order_list_endpoint') }}"
+                       class="nav-link {% if request.url.path.startswith('/admin/order') %}active{% endif %}">
+                        Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('admin_coupon_list_endpoint') }}"
+                       class="nav-link {% if request.url.path.startswith('/admin/coupon') %}active{% endif %}">
+                        Coupons</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="d-flex flex-column p-4 flex-grow-1 admin-content">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0 fw-bold">
+                {% if categories %}Categories
+                {% elif products %}Products
+                {% elif orders %}Orders
+                {% elif coupons %}Coupons
+                {% endif %}</h3>
+            </div>
+
+            {% if paginator and paginator.last > 1 %}
+                <nav aria-label="Page navigation" class="mb-3">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if paginator.previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1" aria-label="First">&laquo;</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ paginator.previous }}" aria-label="Previous">&lsaquo;</a>
+                            </li>
+                        {% endif %}
+                        {% for num in paginator.page_range %}
+                            <li class="page-item {% if paginator.page == num %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if paginator.next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ paginator.next }}" aria-label="Next">&rsaquo;</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ paginator.last }}" aria-label="Last">&raquo;</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+
+            {% block content1 %}
+            {% endblock %}
+
+        </div>
+    </div>
+{% endblock %}

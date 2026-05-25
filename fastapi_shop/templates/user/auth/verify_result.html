@@ -1,0 +1,37 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Email Verification{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper d-flex align-items-center justify-content-center bg-light">
+  <div class="auth-card">
+    <div class="card shadow border-0 rounded-3">
+      <div class="card-body p-4 p-md-5 text-center">
+        {% if success %}
+        <div class="mb-4">
+          <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+            <i class="bi bi-check-circle fs-1 text-success"></i>
+          </div>
+          <h4 class="fw-bold text-success">Email Verified!</h4>
+        </div>
+        <p class="text-muted mb-4">{{ message }}</p>
+        <a href="{{ url_for('login_page') }}" class="btn btn-primary">
+          Go to Login
+        </a>
+        {% else %}
+        <div class="mb-4">
+          <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+            <i class="bi bi-x-circle fs-1 text-danger"></i>
+          </div>
+          <h4 class="fw-bold text-danger">Verification Failed</h4>
+        </div>
+        <p class="text-muted mb-4">{{ message }}</p>
+        <a href="{{ url_for('login_page') }}" class="btn btn-outline-primary">
+          Back to Login
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

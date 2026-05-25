@@ -1,0 +1,120 @@
+{% extends "admin/home.html" %}
+
+{% block title %}
+    Admin product edit
+{% endblock %}
+
+{% block content1 %}
+
+    <div class="container">
+        <h1>Edit product {{ product.name }}</h1>
+
+        <div class="row p-2 ">
+
+            <div class="col-12 col-md-10 col-lg-8 col-xl-6">
+
+                <h3>{{ product._id }}</h3>
+                <form action="{{ url_for('admin_product_edit_endpoint', _id=product._id) }}" method="post"
+                      class="row g-3"
+                      enctype="multipart/form-data" name="product_edit" x-data="formSubmit()" @submit="submitting = true">
+
+                    <label for="category" class="form-label mt-3">Category name</label>
+                    <select class="form-select mt-0" aria-label="Category select" id="category" name="category_id"
+                            x-data="choices">
+                        <option selected value="{{ product.category_id }}">{{ product.category_name }}</option>
+                        {% for cat in categories_list %}
+                            <option value="{{ cat._id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control mt-0" id="name" name="name"
+                           value="{{ product.name }}">
+                    <label for="slug" class="form-label">Slug</label>
+                    <input type="text" class="form-control mt-0" id="slug" name="slug"
+                           placeholder="{{ product.slug }}" disabled readonly>
+
+                    <hr>
+                    <div x-data="dropzone()">
+                        <label for="image" class="form-label">Image of product</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img class="img-thumbnail img-max"
+                                     src="{% if product.image %}
+                                    {{ url_for('static', path=product.image) }}
+                                  {% else %}
+                                    {{ url_for('static', path='img/void.png') }}
+                                  {% endif %}"
+                                     alt="{{ product.image }}">
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" type="file" id="image" name="image">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <label for="price" class="form-label">Price</label>
+                    <div x-data="{ priceError: '' }">
+                        <input type="number" min="0.01" step="0.01" class="form-control mt-0" id="price"
+                               name="price" value="{{ product.price }}"
+                               :class="{ 'is-invalid': priceError }"
+                               @input="priceError = window.validatePrice($el.value)">
+                        <div class="invalid-feedback" x-text="priceError" x-show="priceError"></div>
+                    </div>
+
+                    <label for="description" class="form-label">Product description</label>
+                    <textarea rows="3" class="form-control mt-0" id="description"
+                              name="description">{{ product.description }}</textarea>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="available" name="available"
+                                {% if product.available %} checked {% endif %}>
+                        <label class="form-check-label" for="available">Is product available</label>
+                    </div>
+
+                    <hr>
+                    <label class="form-label fw-semibold">External Sales Channels</label>
+                    <div class="mb-3">
+                        <div class="input-group mb-2">
+                            <span class="input-group-text" style="min-width: 110px;">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="#F1641E"><rect x="1" y="1" width="14" height="14" rx="3" fill="#F1641E"/><text x="8" y="12" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="sans-serif">E</text></svg>
+                                <span class="ms-2">Etsy</span>
+                            </span>
+                            <input type="url" class="form-control" name="external_etsy"
+                                   value="{{ product.external_links.get('Etsy', '') if product.external_links else '' }}"
+                                   placeholder="https://etsy.com/listing/..." aria-label="Etsy URL">
+                        </div>
+                        <div class="input-group mb-2">
+                            <span class="input-group-text" style="min-width: 110px;">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="#0ABD8B"><rect x="1" y="1" width="14" height="14" rx="3" fill="#0ABD8B"/><text x="8" y="12" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="sans-serif">G</text></svg>
+                                <span class="ms-2">Gumroad</span>
+                            </span>
+                            <input type="url" class="form-control" name="external_gumroad"
+                                   value="{{ product.external_links.get('Gumroad', '') if product.external_links else '' }}"
+                                   placeholder="https://gumroad.com/l/..." aria-label="Gumroad URL">
+                        </div>
+                        <small class="text-muted">Leave blank if not applicable. Shows trust badges on product page.</small>
+                    </div>
+
+                    <input type="hidden" name="_id" value="{{ product._id }}">
+
+                    <button type="submit" class="btn btn-info" :disabled="submitting">
+                        <span x-show="submitting" class="spinner-border spinner-border-sm me-1"></span>
+                        Edit
+                    </button>
+
+                    <a href="{{ url_for('admin_product_create_endpoint') }}"
+                       class="btn btn-outline-success mt-3" role="button">
+                        Create another product</a>
+
+                    <a href="{{ url_for('admin_product_delete_endpoint', _id=product._id) }}"
+                       class="btn btn-outline-danger mt-3" role="button"
+                       aria-disabled="true">
+                        Delete</a>
+
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

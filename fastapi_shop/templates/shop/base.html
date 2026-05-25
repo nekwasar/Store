@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="{% block meta_description %}Shop the latest products at great prices. Fast shipping and easy returns.{% endblock %}">
+    <title>{% block title %}My shop{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style">
+    <link href="{{ vite_asset('static_src/scss/style.scss') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body x-data="cartOffcanvas" x-on:keydown.escape="closeCart">
+<nav class="navbar navbar-expand-lg shadow-sm bg-white" aria-label="Main navigation">
+    <div class="container">
+
+        <a href="{{ url_for('product_list_endpoint') }}" class="navbar-brand fw-semibold">My shop</a>
+
+        {% if admin %}
+            <a href="{{ url_for('get_admin') }}" class="btn btn-outline-primary btn-sm">Admin Page</a>
+        {% else %}
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="hamburger-bar"></span>
+                <span class="hamburger-bar"></span>
+                <span class="hamburger-bar"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('product_list_endpoint') }}">Products</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    <div class="position-relative"
+                         x-data="searchSuggestions"
+                         x-on:keydown="onKeydown"
+                         x-on:click.away="close">
+                        <form action="{{ url_for('product_search') }}" method="GET" role="search" class="d-flex"
+                              x-on:submit="if (selectedIndex >= 0) { $event.preventDefault(); select(selectedIndex); }">
+                            <div class="input-group input-group-sm">
+                                <input type="search"
+                                       class="form-control"
+                                       name="q"
+                                       placeholder="Search products..."
+                                       aria-label="Search"
+                                       x-ref="input"
+                                       x-model="query"
+                                       x-on:focus="query.length >= 2 && suggestions.length > 0 ? open = true : open = false">
+                                <button class="btn btn-outline-primary" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div x-show="open"
+                             x-cloak
+                             x-transition
+                             class="position-absolute top-100 end-0 mt-1 w-100 bg-white border rounded-3 shadow-lg"
+                             style="min-width: 300px; z-index: 1050;">
+                            <template x-for="(item, index) in suggestions" :key="item._id">
+                                <a :href="`/product/${item._id}/${item.slug}`"
+                                   class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-dark"
+                                   :class="{'bg-light': selectedIndex === index}"
+                                   x-on:mouseenter="selectedIndex = index"
+                                   x-on:click="open = false">
+                                    <img x-show="item.thumb"
+                                         :src="`/static/${item.thumb}`"
+                                         alt=""
+                                         class="rounded-2"
+                                         style="width: 40px; height: 40px; object-fit: cover;">
+                                    <div class="flex-grow-1">
+                                        <div class="small fw-medium" x-text="item.name"></div>
+                                        <div class="small text-muted" x-text="'$' + item.price"></div>
+                                    </div>
+                                </a>
+                            </template>
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('register_page') }}" class="btn btn-outline-primary btn-sm">Register</a>
+                    <a href="{{ url_for('login_page') }}" class="btn btn-outline-primary btn-sm">Login</a>
+                    <a role="button" href="#" x-on:click.prevent="openCart()" class="btn btn-dark position-relative">
+                        <i class="bi bi-cart"></i>
+                        {% with total_items=cart|length %}
+                            {% if total_items > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ cart|length }}
+                            </span>
+                            {% endif %}
+                        {% endwith %}
+                    </a>
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+</nav>
+
+{% if messages %}
+<div class="container pt-3">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<main>
+{% block content %}
+{% endblock %}
+</main>
+
+<script src="{{ vite_asset('static_src/js/main.js') }}" defer></script>
+
+<!-- Offcanvas Cart -->
+<div x-show="open"
+     x-cloak
+     class="offcanvas-backdrop fade show"
+     x-on:click="closeCart"
+     style="z-index: 1040;"></div>
+
+<div class="offcanvas offcanvas-end"
+     :class="{ 'show': open }"
+     tabindex="-1"
+     aria-label="Shopping cart"
+     style="z-index: 1045; {% if open %}visibility: visible;{% endif %}">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-semibold">
+            <i class="bi bi-cart me-2"></i>Shopping Cart
+        </h5>
+        <button type="button" class="btn-close" x-on:click="closeCart" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column p-0">
+        <div x-show="loading" class="d-flex align-items-center justify-content-center flex-grow-1">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div x-html="html" x-show="!loading"></div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Thank you
+{% endblock %}
+
+{% block content %}
+
+    <div class="container content-section">
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+            </div>
+            <h1 class="display-5 fw-bold">Thank You!</h1>
+            <p class="lead text-muted mb-2">Your order has been successfully completed.</p>
+            <p class="mb-4">Your order number is <strong>{{ order._id }}</strong>.</p>
+            <a href="{{ url_for('product_list_endpoint') }}" class="btn btn-primary btn-lg">Continue Shopping</a>
+        </div>
+    </div>
+
+{% endblock %}

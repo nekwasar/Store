@@ -1,0 +1,112 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Order
+{% endblock %}
+
+{% block content %}
+
+    <div class="container content-section">
+
+        <h1 class="h3 fw-bold mb-4">Checkout</h1>
+
+        {% include "components/checkout_steps.html" %}
+
+        <div class="row g-4">
+
+            <div class="col-12 col-lg-7">
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3">Shipping Details</h5>
+                        <form action="{{ url_for('order_created') }}" method="post" class="row g-3"
+                              enctype="application/x-www-form-urlencoded" name="order_data">
+                            <div class="col-12 col-md-6">
+                                <label for="first_name" class="form-label small fw-semibold">First Name</label>
+                                <input required type="text" class="form-control" id="first_name" name="first_name"
+                                       placeholder="First Name">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="last_name" class="form-label small fw-semibold">Last Name</label>
+                                <input required type="text" class="form-control" id="last_name" name="last_name"
+                                       placeholder="Last Name">
+                            </div>
+                            <div class="col-12">
+                                <label for="email" class="form-label small fw-semibold">Email</label>
+                                <input required type="email" class="form-control" id="email" name="email"
+                                       placeholder="Email">
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label small fw-semibold">Address</label>
+                                <input required type="text" class="form-control" id="address" name="address"
+                                       placeholder="Address">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label for="postal_code" class="form-label small fw-semibold">Postal Code</label>
+                                <input required type="text" class="form-control" id="postal_code" name="postal_code"
+                                       placeholder="Postal Code">
+                            </div>
+                            <div class="col-12 col-md-8">
+                                <label for="city" class="form-label small fw-semibold">City</label>
+                                <input required type="text" class="form-control" id="city" name="city"
+                                       placeholder="City">
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
+                                        x-data="{ loading: false }"
+                                        x-on:click="loading = true"
+                                        :disabled="loading">
+                                    <span x-show="loading" class="spinner-border spinner-border-sm" role="status"></span>
+                                    <span x-text="loading ? 'Placing Order...' : 'Place Order'"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-12 col-lg-5">
+                <div class="card shadow-sm border-0 order-summary-card">
+                    <div class="card-header bg-white border-bottom-0 pt-3">
+                        <h5 class="fw-semibold mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for item in items %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <div>
+                                        <div class="fw-semibold small">{{ item.product.name }}</div>
+                                        <small class="text-muted">Qty: {{ item.quantity }} &times; ${{ item.price }}</small>
+                                    </div>
+                                    <span>${{ '%0.2f'|format(item.total_price|float) }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small text-muted">Subtotal</span>
+                            <span class="small">${{ '%0.2f'|format(cart.get_total_price()|float) }}</span>
+                        </div>
+                        {% if cart.coupon %}
+                        <div class="d-flex justify-content-between mb-1 text-success">
+                            <span class="small">Coupon "{{ cart.coupon.code }}" ({{ cart.coupon.discount }}% off)</span>
+                            <span class="small">−${{ '%0.2f'|format(cart.get_discount()|float) }}</span>
+                        </div>
+                        {% endif %}
+                        <hr class="my-2">
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total</span>
+                            <span class="price-display">${{ '%0.2f'|format(cart.get_total_price_after_discount()|float) }}</span>
+                        </div>
+                        <small class="text-muted d-block mt-2">All prices in USD</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

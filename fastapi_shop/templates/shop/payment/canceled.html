@@ -1,0 +1,33 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Payment Canceled
+{% endblock %}
+
+{% block content %}
+
+<div class="container content-section">
+
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center"
+                 style="width: 80px; height: 80px; border-radius: 50%; background: #FEE2E2;">
+                <i class="bi bi-x-lg text-danger" style="font-size: 2.5rem;"></i>
+            </div>
+        </div>
+        <h2 class="fw-bold mb-2">Payment Canceled</h2>
+        <p class="text-muted mb-4">Your payment was not processed. No charges were made.</p>
+
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{{ url_for('cart_detail') }}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left me-2"></i>Return to Cart
+            </a>
+            <a href="{{ url_for('order_create') }}" class="btn btn-primary">
+                Try Again
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

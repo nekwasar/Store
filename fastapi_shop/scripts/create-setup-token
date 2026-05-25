@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""
+Generate a one-time admin setup URL. Must be run on the server.
+
+Usage:
+    python scripts/create-setup-token
+    python scripts/create-setup-token --expires-minutes 30
+    python scripts/create-setup-token --base-url https://store.nekwasar.com
+
+The command prints a URL containing a single-use cryptographic token.
+An administrator opens the URL in a browser to create their admin account.
+The token expires after 15 minutes (configurable) and works exactly once.
+"""
+
+import argparse
+import hashlib
+import os
+import secrets
+import sys
+from datetime import datetime, timedelta, timezone
+
+from dotenv import load_dotenv
+from pymongo import ASCENDING, MongoClient
+
+load_dotenv()
+
+MONGO_URL = os.environ.get("MONGODB_URL", "mongodb://localhost:27017")
+MONGO_DB = os.environ.get("MONGODB_DB", "fastapi_shop")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate an admin setup token")
+    parser.add_argument(
+        "--expires-minutes",
+        type=int,
+        default=15,
+        help="Token lifetime in minutes (default: 15)",
+    )
+    parser.add_argument(
+        "--base-url",
+        type=str,
+        default="http://localhost:8989",
+        help="Base URL of the application (default: http://localhost:8989)",
+    )
+    args = parser.parse_args()
+
+    raw_token = secrets.token_urlsafe(32)
+    token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=args.expires_minutes)
+
+    client = MongoClient(MONGO_URL)
+    db = client[MONGO_DB]
+    db.setup_tokens.create_index([("expires_at", ASCENDING)], expireAfterSeconds=0)
+    db.setup_tokens.insert_one(
+        {
+            "token_hash": token_hash,
+            "created_at": datetime.now(timezone.utc),
+            "expires_at": expires_at,
+            "used": False,
+        }
+    )
+    client.close()
+
+    base_url = args.base_url.rstrip("/")
+    print()
+    print(f"  Admin setup URL (expires in {args.expires_minutes} min):")
+    print()
+    print(f"  {base_url}/user/setup?token={raw_token}")
+    print()
+    print("  Share this URL only with the intended administrator.")
+    print()
+
+
+if __name__ == "__main__":
+    main()

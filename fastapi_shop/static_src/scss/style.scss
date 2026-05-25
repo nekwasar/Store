@@ -1,0 +1,649 @@
+@import 'bootstrap-custom';
+
+// Choices.js
+@import 'choices.js/src/styles/choices';
+
+// Flatpickr
+@import 'flatpickr/dist/flatpickr.min';
+
+// Notyf
+@import 'notyf/notyf.min';
+
+// Dropzone
+@import 'dropzone/dist/dropzone';
+
+// Choices.js theme overrides
+.choices__inner {
+  border-radius: 0.5rem;
+  border-color: #dee2e6;
+  background-color: #fff;
+  min-height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+}
+
+.choices__input {
+  font-size: 1rem;
+}
+
+.choices__list--dropdown .choices__item--selectable {
+  padding: 0.5rem 0.75rem;
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted {
+  background-color: #eef2ff;
+}
+
+.choices__item--selectable {
+  color: #1F2937;
+}
+
+.choices__placeholder {
+  opacity: 0.6;
+}
+
+.choices.is-focused .choices__inner {
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+}
+
+// Flatpickr theme overrides
+.flatpickr-calendar {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected.inRange,
+.flatpickr-day.startRange.inRange,
+.flatpickr-day.endRange.inRange,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange:focus,
+.flatpickr-day.endRange:focus,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover,
+.flatpickr-day.today.selected {
+  background: #4F46E5;
+  border-color: #4F46E5;
+}
+
+.flatpickr-day.today {
+  border-color: #4F46E5;
+}
+
+.flatpickr-day.today:hover,
+.flatpickr-day.today:focus {
+  background: #4F46E5;
+  color: #fff;
+}
+
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  background: #4F46E5;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  fill: #fff;
+}
+
+.flatpickr-months {
+  border-radius: 0.5rem 0.5rem 0 0;
+  overflow: hidden;
+}
+
+span.flatpickr-weekday {
+  color: #6B7280;
+  font-weight: 600;
+}
+
+// Notyf theme overrides
+.notyf {
+  z-index: 9999;
+}
+
+.notyf__toast {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.notyf__icon i {
+  font-size: 1.25rem;
+}
+
+// Dropzone theme overrides
+.dropzone {
+  border: 2px dashed #d1d5db;
+  border-radius: 0.5rem;
+  background: #F9FAFB;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.dropzone:hover {
+  border-color: #4F46E5;
+  background-color: #EEF2FF;
+}
+
+.dropzone .dz-message {
+  color: #6B7280;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.dropzone .dz-preview .dz-image {
+  border-radius: 0.375rem;
+}
+
+.dropzone .dz-preview .dz-remove {
+  color: #EF4444;
+  font-size: 0.875rem;
+}
+
+// Skeleton loader
+@keyframes skeleton-pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.skeleton-card {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+// Card hover transitions
+.product-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+
+
+// Cart item card
+.cart-item-card {
+  transition: background-color 0.15s ease;
+}
+.cart-item-card:hover {
+  background-color: #F9FAFB;
+}
+
+// Product detail card
+.detail-card-img {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+// Order summary card
+.order-summary-card {
+  position: sticky;
+  top: 1rem;
+}
+
+// Consistent section spacing
+.content-section {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+// Category sidebar nav pills
+.category-sidebar .nav-link {
+  border-radius: 0.5rem;
+  margin-bottom: 0.25rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+// Price display
+.price-display {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #4F46E5;
+}
+
+// Transition custom properties
+:root {
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+// Fade In Up entrance animation
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Staggered card entrance
+.stagger-card {
+  animation: fadeInUp 0.3s ease-out both;
+}
+
+// Respect reduced motion
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .stagger-card {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+// Navbar nav link hover animation
+.navbar .nav-link {
+  position: relative;
+  transition: color var(--transition-fast);
+}
+.navbar .nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #4F46E5;
+  transition: width var(--transition-base), left var(--transition-base);
+}
+.navbar .nav-link:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+// Admin sidebar styling
+.admin-sidebar {
+  width: 280px;
+}
+.admin-sidebar .nav-link {
+  border-radius: 0.5rem;
+  color: #4B5563;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.25rem;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  border-left: 3px solid transparent;
+}
+.admin-sidebar .nav-link:hover {
+  background-color: #EEF2FF;
+  color: #4F46E5;
+}
+.admin-sidebar .nav-link.active {
+  background-color: #EEF2FF;
+  color: #4F46E5;
+  font-weight: 600;
+  border-left-color: #4F46E5;
+}
+
+// Pagination styling
+.pagination .page-link {
+  border-radius: 0.5rem !important;
+  margin: 0 0.125rem;
+  color: #4B5563;
+  border: none;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+.pagination .page-link:hover {
+  background-color: #EEF2FF;
+  color: #4F46E5;
+}
+.pagination .page-item.active .page-link {
+  background-color: #4F46E5;
+  color: #fff;
+}
+
+// Table row cursor
+.table-row:hover {
+  cursor: pointer;
+}
+
+// Image helpers
+.image-container {
+    max-width: 200px;
+    min-width: 100px;
+    margin: 0 auto;
+}
+.img-max {
+  max-width: 150px;
+  width:100%;
+}
+
+// Input error styling
+.highlight-input {
+    border-color: red !important;
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5) !important;
+}
+
+// Submit button reset
+.submit-button {
+    border: none;
+}
+
+// Border-radius standards via Bootstrap utility classes
+// Cards: rounded-3 — applied in templates
+// Inputs: rounded-2 — Bootstrap default
+// Buttons: rounded-2 — Bootstrap default
+// Modals: rounded-3 — applied in templates
+// Badges: rounded-pill — applied in templates
+
+// Dropdown items hover
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: #EEF2FF;
+  color: #4F46E5;
+}
+
+// Checkout progress steps
+.checkout-steps {
+  gap: 0;
+}
+.checkout-step {
+  flex: 1;
+  position: relative;
+  text-align: center;
+}
+.checkout-step::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: #e5e7eb;
+  z-index: 0;
+}
+.checkout-step:last-child::after {
+  display: none;
+}
+.checkout-step.completed::after {
+  background: #4F46E5;
+}
+.checkout-step.active::after {
+  background: linear-gradient(to right, #4F46E5 50%, #e5e7eb 50%);
+}
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 0.875rem;
+  font-weight: 700;
+  z-index: 1;
+  transition: background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
+}
+.checkout-step.completed .step-circle {
+  background: #4F46E5;
+  color: #fff;
+}
+.checkout-step.active .step-circle {
+  background: #EEF2FF;
+  color: #4F46E5;
+  border: 2px solid #4F46E5;
+}
+.checkout-step.future .step-circle {
+  background: #F3F4F6;
+  color: #9CA3AF;
+  border: 2px solid #e5e7eb;
+}
+.checkout-step.completed .step-label {
+  color: #4F46E5;
+  font-weight: 600;
+}
+.checkout-step.active .step-label {
+  color: #4F46E5;
+  font-weight: 700;
+}
+.checkout-step.future .step-label {
+  color: #9CA3AF;
+}
+
+// Offcanvas cart
+.offcanvas {
+  --bs-offcanvas-width: 400px;
+}
+@media (max-width: 576px) {
+  .offcanvas {
+    --bs-offcanvas-width: 85vw;
+  }
+}
+.offcanvas-backdrop {
+  cursor: pointer;
+}
+
+// Success checkmark animation
+@keyframes scaleIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.success-checkmark {
+  animation: scaleIn 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+// Hamburger menu animation
+.navbar-toggler {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+}
+.hamburger-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #4B5563;
+  border-radius: 2px;
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease;
+}
+.navbar-toggler[aria-expanded="true"] .hamburger-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.navbar-toggler[aria-expanded="true"] .hamburger-bar:nth-child(2) {
+  opacity: 0;
+}
+.navbar-toggler[aria-expanded="true"] .hamburger-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+// Touch-friendly table rows
+.table td, .table th {
+  vertical-align: middle;
+}
+@media (pointer: coarse) {
+  .table td, .table th {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  .table .form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0;
+  }
+  .table .btn {
+    min-height: 44px;
+  }
+  .table-link {
+    min-height: 44px;
+  }
+}
+
+// CLS prevention — aspect-ratio on all product images
+.product-card img,
+.recommendation-card img,
+.cart-item-card img,
+.detail-card-img img {
+  aspect-ratio: 1;
+  object-fit: cover;
+  width: 100%;
+}
+
+// Responsive admin sidebar
+@media (max-width: 991.98px) {
+  .admin-layout {
+    flex-direction: column !important;
+  }
+  .admin-sidebar {
+    width: 100% !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem;
+    padding: 0.75rem !important;
+    border-bottom: 1px solid #dee2e6;
+    border-end: none !important;
+  }
+  .admin-sidebar h6 {
+    display: none;
+  }
+  .admin-sidebar .nav {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-bottom: 0 !important;
+  }
+  .admin-sidebar .nav-link {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+  .admin-content {
+    padding: 1rem !important;
+  }
+}
+
+// Touch-friendly quantity steppers
+@media (pointer: coarse) {
+  .btn-sm {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// Checkout responsive
+@media (max-width: 991.98px) {
+  .order-summary-card {
+    position: static !important;
+  }
+}
+
+// Admin form buttons stack on mobile
+@media (max-width: 575.98px) {
+  .admin-form-actions {
+    flex-direction: column !important;
+  }
+  .admin-form-actions .btn {
+    width: 100%;
+  }
+  .btn-group-actions {
+    flex-direction: column !important;
+    width: 100%;
+  }
+  .btn-group-actions .btn {
+    width: 100%;
+    margin: 0.25rem 0 !important;
+  }
+}
+
+// Alpine.js x-cloak
+[x-cloak] {
+  display: none !important;
+}
+
+// Auth page enhancements
+.auth-wrapper {
+  min-height: 100vh;
+}
+.auth-card {
+  max-width: 450px;
+  width: 100%;
+}
+.auth-card .card {
+  border-radius: 0.75rem;
+}
+.auth-card .input-group .btn-outline-secondary {
+  border-color: #d1d5db;
+}
+.auth-card .input-group .btn-outline-secondary:hover {
+  background-color: #EEF2FF;
+  color: #4F46E5;
+  border-color: #4F46E5;
+}
+.auth-card .progress {
+  border-radius: 999px;
+  background-color: #e5e7eb;
+}
+.auth-card .progress-bar {
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+// Sort dropdown styling
+.sort-dropdown .btn-outline-secondary {
+  border-color: #d1d5db;
+  border-radius: 0.5rem;
+}
+.sort-dropdown .btn-outline-secondary:hover {
+  background-color: #EEF2FF;
+  color: #4F46E5;
+  border-color: #4F46E5;
+}
+
+// Search suggestion thumbnails
+.search-suggestion-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 0.375rem;
+}
+
+// Category count badge
+.category-count {
+  font-size: 0.75rem;
+  background-color: #EEF2FF;
+  color: #4F46E5;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+// Active state for category count
+.nav-link.active .category-count {
+  background-color: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+// External link trust badges
+.external-link-badge {
+  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 0.8125rem;
+
+  &:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}

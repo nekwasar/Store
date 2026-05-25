@@ -1,0 +1,68 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Order Confirmed
+{% endblock %}
+
+{% block content %}
+
+<div class="container content-section">
+
+    {% include "components/checkout_steps.html" %}
+
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <div class="success-checkmark d-inline-flex align-items-center justify-content-center"
+                 style="width: 80px; height: 80px; border-radius: 50%; background: #D1FAE5;">
+                <i class="bi bi-check-lg text-success" style="font-size: 2.5rem;"></i>
+            </div>
+        </div>
+        <h2 class="fw-bold mb-2">Order Confirmed!</h2>
+        <p class="text-muted mb-4">Thank you for your purchase.</p>
+
+        <div class="card shadow-sm border-0 mx-auto mb-4" style="max-width: 500px;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">Order Number</span>
+                    <span class="fw-semibold small">{{ order._id }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">Date</span>
+                    <span class="small">{{ order.created.strftime('%B %d, %Y') }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">Email</span>
+                    <span class="small">{{ order.email }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">Shipping</span>
+                    <span class="small">{{ order.address }}, {{ order.city }}</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between fw-bold">
+                    <span>Total Paid</span>
+                    <span class="price-display">${{ '%0.2f'|format(order.get_total_cost()|float) }}</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="small text-muted mb-4">A confirmation email has been sent to <strong>{{ order.email }}</strong>.</p>
+
+        <a href="{{ url_for('product_list_endpoint') }}" class="btn btn-primary px-4">
+            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+        </a>
+    </div>
+
+</div>
+
+<style>
+@keyframes scaleIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+.success-checkmark {
+    animation: scaleIn 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+</style>
+
+{% endblock %}

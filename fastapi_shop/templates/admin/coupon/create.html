@@ -1,0 +1,79 @@
+{% extends "admin/home.html" %}
+
+{% block title %}
+    Admin coupon create
+{% endblock %}
+
+{% block content1 %}
+
+    <div class="container">
+        <h1>Create a new coupon</h1>
+
+        <div class="row p-2 ">
+
+            <div class="col-12 col-md-10 col-lg-8 col-xl-6">
+
+                <form action="{{ url_for('admin_coupon_create_endpoint') }}" method="post" class="row g-3"
+                      enctype="application/x-www-form-urlencoded" name="object_create" x-data="formSubmit()">
+
+                    <div class="input-group">
+                        <span class="input-group-text">Code</span>
+                        <input required type="text" aria-label="Code" class="form-control" name="code"
+                                {% if form %} value="{{ form.code }}{% endif %}">
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-text">Valid from</span>
+                        <input required type="text" aria-label="Valid from" class="form-control"
+                               name="valid_from" x-data="datepicker()"
+                                {% if form %} value="{{ form.valid_from }}{% endif %}">
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-text">Valid to</span>
+                        <input required type="text" aria-label="Valid to" class="form-control" name="valid_to"
+                               x-data="datepicker()"
+                                {% if form %} value="{{ form.valid_to }}{% endif %}">
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-text">Discount</span>
+                        <div x-data="{ discountError: '' }" class="w-100">
+                            <input required type="number" min="1" max="100" step="1" aria-label="Discount"
+                                   class="form-control" name="discount"
+                                   :class="{ 'is-invalid': discountError }"
+                                   @input="discountError = window.validateDiscount($el.value)"
+                                    {% if form %} value="{{ form.discount }}{% endif %}">
+                            <div class="invalid-feedback" x-text="discountError" x-show="discountError"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="checkbox" name="active"
+                                   aria-label="is-active-checkbox"
+                                    {% if form and form.actvie %} checked {% endif %}>
+                        </div>
+                        <span class="input-group-text" id="inputGroup-sizing-default" aria-label="is-active-checkbox">
+                            Is the coupon active?</span>
+                    </div>
+
+                    <input type="hidden" name="next_page" x-model="nextPage">
+
+                    <button type="submit" class="btn btn-info"
+                            @click.prevent="submitWithPage('edit')" :disabled="submitting">
+                        <span x-show="submitting" class="spinner-border spinner-border-sm me-1"></span>
+                        Create
+                    </button>
+
+                    <button type="submit" class="btn btn-outline-success"
+                            @click.prevent="submitWithPage('create')" :disabled="submitting">
+                        <span x-show="submitting" class="spinner-border spinner-border-sm me-1"></span>
+                        Save and Create Another
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

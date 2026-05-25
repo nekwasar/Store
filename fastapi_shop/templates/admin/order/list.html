@@ -1,0 +1,59 @@
+{% extends "admin/home.html" %}
+
+{% block title %}
+    Admin orders list
+{% endblock %}
+
+{% block content1 %}
+    <form action="{{ url_for('admin_objects_delete_endpoint', model='order') }}" method="post"
+          x-data="checkboxList()">
+        <div class="table-responsive">
+        <table class="table table-hover text-center">
+            <tr>
+                <th scope="col"><label class="d-flex align-items-center gap-1" style="cursor:pointer; min-height:44px;"><input class="form-check-input" type="checkbox" id="masterCheckbox"
+                                       @change="toggleAll" aria-label="delete"> Delete</label>
+                </th>
+                <th scope="col"></th>
+                <th scope="col" class="text-start">ID</th>
+                <th scope="col">Items</th>
+                <th scope="col">Email</th>
+                <th scope="col">Cost/Paid</th>
+                <th scope="col">Created</th>
+                <th scope="col">Updated</th>
+            </tr>
+            {% for order in orders %}
+                <tr class="table-row align-middle" data-href="{{ url_for('admin_order_edit_endpoint', _id=order._id) }}">
+                    <td><label style="display:flex; align-items:center; justify-content:center; min-height:44px; cursor:pointer;"><input class="form-check-input mt-0 childCheckbox" type="checkbox" name="delete"
+                               @change="onChildChange" aria-label="to-delete-checkbox" value="{{ order._id }}"></label></td>
+                    <td class="text-end" x-data="clipboardCopy('{{ order._id }}')">
+                        <a href="#" @click.prevent="copy" data-bs-toggle="tooltip" data-bs-title="Click to copy ID"
+                           class="text-decoration-none text-dark">⧉</a>
+                    </td>
+                    <td class="table-link-child text-start small">{{ order._id }}</td>
+                    <td class="table-link-child">{{ order["items"]|length }}</td>
+                    <td class="table-link-child">{{ order.email }}</td>
+                    <td class="table-link-child
+                                    {% if order.paid %} table-success
+                                    {% else %} table-danger {% endif %}">
+                        ${{ '%0.2f'|format(order.get_total_cost()|float) }}</td>
+                    <td class="table-link-child small">{{ order.created }}</td>
+                    <td class="table-link-child small">{{ order.updated }}</td>
+                </tr>
+
+            {% endfor %}
+            <tr class="table-row">
+                <td class="table-link table-info" data-href="{{ url_for('admin_order_create_endpoint') }}" colspan="9">
+                    Add new order
+                </td>
+            </tr>
+            <tr class="table-row" style="transform: rotate(0);">
+                <td colspan="9" class="table-danger p-0">
+                    <button type="submit" class="btn stretched-link submit-button"
+                            x-bind:disabled="!anyChecked">Delete selected
+                    </button>
+                </td>
+            </tr>
+        </table>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Payment
+{% endblock %}
+
+{% block content %}
+
+<div class="container content-section">
+
+    <h1 class="h3 fw-bold mb-4">Payment</h1>
+
+    {% include "components/checkout_steps.html" %}
+
+    <div class="row g-4">
+
+        <div class="col-12 col-lg-7">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h5 class="fw-semibold mb-3">Order Summary</h5>
+
+                    {% for item in order.items %}
+                    <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
+                        <div style="width: 60px; height: 60px; border-radius: 0.375rem; overflow: hidden; flex-shrink: 0;">
+                            <img src="{% if products[item.product_id].thumb %}{{ url_for('static', path=products[item.product_id].thumb) }}{% elif products[item.product_id].image %}{{ url_for('static', path=products[item.product_id].image) }}{% else %}{{ url_for('static', path='img/void.png') }}{% endif %}"
+                                 alt="{{ products[item.product_id].name }}"
+                                 class="img-fluid h-100" style="object-fit: cover; width: 100%;"
+                                 loading="lazy" decoding="async">
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-semibold small">{{ products[item.product_id].name }}</div>
+                            <small class="text-muted">Qty: {{ item.quantity }} &times; ${{ item.price }}</small>
+                        </div>
+                        <span class="fw-semibold">${{ '%0.2f'|format(item.get_cost()|float) }}</span>
+                    </div>
+                    {% endfor %}
+
+                    {% if order.coupon %}
+                    <div class="d-flex justify-content-between mb-1 text-success small">
+                        <span>Subtotal</span>
+                        <span>${{ '%0.2f'|format(order.get_total_cost_before_discount()|float) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1 text-success">
+                        <span>Coupon "{{ order.coupon.code }}" ({{ order.discount }}% off)</span>
+                        <span>−${{ '%0.2f'|format(order.get_discount()|float) }}</span>
+                    </div>
+                    {% endif %}
+
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total</span>
+                        <span class="price-display">${{ '%0.2f'|format(order.get_total_cost()|float) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-semibold mb-3">Shipping To</h5>
+                    <p class="mb-1 small">{{ order.first_name }} {{ order.last_name }}</p>
+                    <p class="mb-1 small">{{ order.address }}</p>
+                    <p class="mb-0 small">{{ order.postal_code }}, {{ order.city }}</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-12 col-lg-5">
+            <div class="card shadow-sm border-0 order-summary-card">
+                <div class="card-header bg-white pt-3">
+                    <h5 class="fw-semibold mb-0">Complete Payment</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-3">You will be redirected to Stripe's secure checkout to complete your payment.</p>
+                    <form action="{{ url_for('payment_process_post') }}" method="post"
+                          x-data="{ loading: false }"
+                          x-on:submit="loading = true">
+                        <button type="submit"
+                                class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 py-2"
+                                :disabled="loading">
+                            <span x-show="loading" class="spinner-border spinner-border-sm" role="status"></span>
+                            <span x-text="loading ? 'Redirecting to Stripe...' : 'Pay Now'"></span>
+                        </button>
+                    </form>
+                    <p class="small text-muted text-center mt-3 mb-0">
+                        <i class="bi bi-lock me-1"></i>Secured by Stripe
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

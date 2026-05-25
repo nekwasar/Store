@@ -1,0 +1,201 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    {% if category %}{{ category.name }}{% else %}Products{% endif %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="d-flex flex-nowrap content-section">
+        <div class="d-flex flex-column flex-shrink-0 p-3 category-sidebar d-none d-lg-flex" style="width: 280px;">
+            <h5 class="d-flex align-items-center mb-3 fw-semibold text-muted text-uppercase small">Categories</h5>
+
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="{{ url_for('product_list_endpoint') }}" aria-current="page"
+                       class="nav-link d-flex align-items-center justify-content-between {% if not category %}active{% endif %}">
+                        All
+                        {% if category_counts %}
+                            <span class="category-count">{{ category_counts.values()|sum }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                {% for c in categories %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('product_list_by_category_endpoint', category_slug=c.slug) }}"
+                           class="nav-link d-flex align-items-center justify-content-between {% if category and category.slug==c.slug %}active{% endif %}">
+                            {{ c.name }}
+                            {% if category_counts and c._id in category_counts %}
+                                <span class="category-count">{{ category_counts[c._id] }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+
+        <div class="d-flex flex-column p-3 flex-grow-1">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                <h1 class="h3 mb-0">{% if search_query %}Search: "{{ search_query }}"{% elif category %}{{ category.name }}{% else %}Products{% endif %}</h1>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted small">{{ total }} product{% if total != 1 %}s{% endif %}</span>
+                    <div class="dropdown sort-dropdown">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle d-flex align-items-center gap-1"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-arrow-down-up"></i>
+                            {% if sort == 'price_asc' %}Price: Low to High
+                            {% elif sort == 'price_desc' %}Price: High to Low
+                            {% elif sort == 'name_asc' %}Name: A-Z
+                            {% elif sort == 'name_desc' %}Name: Z-A
+                            {% elif sort == 'newest' %}Newest
+                            {% elif sort == 'oldest' %}Oldest
+                            {% else %}Sort{% endif %}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                            <li><a class="dropdown-item small {% if sort == 'newest' %}active{% endif %}"
+                                   href="?{% if search_query %}q={{ search_query }}&{% endif %}sort=newest{% if category %}{% endif %}{% if page and page > 1 %}&page={{ page }}{% endif %}">Newest</a></li>
+                            <li><a class="dropdown-item small {% if sort == 'oldest' %}active{% endif %}"
+                                   href="?{% if search_query %}q={{ search_query }}&{% endif %}sort=oldest{% if page and page > 1 %}&page={{ page }}{% endif %}">Oldest</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item small {% if sort == 'price_asc' %}active{% endif %}"
+                                   href="?{% if search_query %}q={{ search_query }}&{% endif %}sort=price_asc{% if page and page > 1 %}&page={{ page }}{% endif %}">Price: Low to High</a></li>
+                            <li><a class="dropdown-item small {% if sort == 'price_desc' %}active{% endif %}"
+                                   href="?{% if search_query %}q={{ search_query }}&{% endif %}sort=price_desc{% if page and page > 1 %}&page={{ page }}{% endif %}">Price: High to Low</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item small {% if sort == 'name_asc' %}active{% endif %}"
+                                   href="?{% if search_query %}q={{ search_query }}&{% endif %}sort=name_asc{% if page and page > 1 %}&page={{ page }}{% endif %}">Name: A-Z</a></li>
+                            <li><a class="dropdown-item small {% if sort == 'name_desc' %}active{% endif %}"
+                                   href="?{% if search_query %}q={{ search_query }}&{% endif %}sort=name_desc{% if page and page > 1 %}&page={{ page }}{% endif %}">Name: Z-A</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {% if products %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+                {% for product in products %}
+                    <div class="col stagger-card" style="animation-delay: {{ loop.index0 * 0.05 }}s">
+                        <div class="card product-card shadow-sm h-100 border-0">
+                            <a href="{{ url_for('product_detail', _id=product._id,  slug=product.slug) }}"
+                               class="text-decoration-none">
+                                <div style="aspect-ratio: 1; overflow: hidden; border-radius: 0.5rem 0.5rem 0 0;">
+                                    <img class="card-img-top img-fluid h-100"
+                                         style="object-fit: cover;"
+                                         src="{% if product.image %}
+                                            {{ url_for('static', path=product.image) }}
+                                       {% else %}
+                                            {{ url_for('static', path='img/void.png') }}
+                                       {% endif %}"
+                                         alt="{{ product.name }}"
+                                         loading="lazy" decoding="async">
+                                </div>
+                            </a>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fs-6">
+                                    <a class="text-decoration-none text-dark stretched-link"
+                                       href="{{ url_for('product_detail', _id=product._id, slug=product.slug) }}">{{ product.name }}</a>
+                                </h5>
+                                <p class="card-text text-muted small text-truncate mt-1">{{ product.description }}</p>
+                                <div class="mt-auto">
+                                    <span class="price-display">${{ product.price }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if total_pages > 1 %}
+            <nav aria-label="Product pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page - 1 }}&per_page={{ per_page }}{% if sort %}&sort={{ sort }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></span>
+                    </li>
+                    {% endif %}
+
+                    {% set window = 2 %}
+                    {% set start_page = [1, page - window]|max %}
+                    {% set end_page = [total_pages, page + window]|min %}
+
+                    {% if start_page > 1 %}
+                    <li class="page-item"><a class="page-link" href="?page=1&per_page={{ per_page }}{% if sort %}&sort={{ sort }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">1</a></li>
+                    {% if start_page > 2 %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                    {% endif %}
+
+                    {% for p in range(start_page, end_page + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="?page={{ p }}&per_page={{ per_page }}{% if sort %}&sort={{ sort }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">{{ p }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if end_page < total_pages %}
+                    {% if end_page < total_pages - 1 %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                    <li class="page-item"><a class="page-link" href="?page={{ total_pages }}&per_page={{ per_page }}{% if sort %}&sort={{ sort }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">{{ total_pages }}</a></li>
+                    {% endif %}
+
+                    {% if page < total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page + 1 }}&per_page={{ per_page }}{% if sort %}&sort={{ sort }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-box display-1 text-muted"></i>
+                <p class="text-muted mt-3">{% if search_query %}No products found matching "{{ search_query }}".{% else %}No products found in this category.{% endif %}</p>
+                <a href="{{ url_for('product_list_endpoint') }}" class="btn btn-outline-primary">Browse all products</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Skeleton loader for initial page load -->
+    <template id="product-skeleton">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            {% for i in range(8) %}
+            <div class="col">
+                <div class="card shadow-sm h-100 border-0 skeleton-card">
+                    <div class="placeholder-glow" style="aspect-ratio: 1;">
+                        <div class="placeholder w-100 h-100 bg-secondary"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="placeholder-glow mb-2">
+                            <span class="placeholder col-8 bg-secondary"></span>
+                        </div>
+                        <div class="placeholder-glow mb-2">
+                            <span class="placeholder col-12 bg-secondary"></span>
+                        </div>
+                        <div class="placeholder-glow">
+                            <span class="placeholder col-4 bg-secondary"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </template>
+
+{% endblock %}
