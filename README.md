@@ -1,44 +1,5 @@
-# fastapi_shop
-Implementation of an online store based on Antonio Mele's book 'Django 4 by Example' using FastAPI and MongoDB, containerized using Docker Compose.
-
-![image](https://github.com/sammyjankins/fastapi_shop/assets/26933434/be09b2c9-13d4-407a-86a4-9493acd1adb4)
-
-
-# Instructions for building and launching the service
-
-## Dependencies
-
-Make sure you have the following tools installed:
-
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
-
-## Running the Project
-
-1. Clone the repository:
-```
-git clone https://github.com/sammyjankins/fastapi_shop.git
-```
-2. Go to the project directory:
-
-```
-cd fastapi_shop
-```
-3. Fill the .env.project and .env.mongo files with actual data following .env.project.template and .env.mongo.template.
-
-4. Build and start the containers:
-
-```
-docker-compose up -d
-```
-
-Admin user will be created automatically. Credentials will be taken from the .env.project file.
-
-5. Check that the containers are running:
-
-```
-docker ps
-```
+# Store
+Online store built with FastAPI and MongoDB, containerized with Docker Compose.
 
 ## Using the Project
 
